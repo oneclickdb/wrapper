@@ -8,6 +8,7 @@
 import Foundation
 import SQLite3
 
+@MainActor
 class DataManager: ObservableObject
 {
     //The connection to the database
