@@ -98,7 +98,7 @@ extension DataManager
     //Create tables for an array of SQL queries
     func createTables(_ queries: [String]) async
     {
-        for table in tables
+        for table in queries
         {
             await createTable(table)
         }
