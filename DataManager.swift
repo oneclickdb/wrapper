@@ -2,14 +2,14 @@
 //  Database.swift
 //  SQLiteWrapper
 //
-//  Created by OneClickDB on 2/1/2023.
+//  Created by OneClickDB
 //
 
 import Foundation
 import SQLite3
 
-@MainActor
-class DataManager: ObservableObject
+@Observable @MainActor
+class DataManager
 {
     //The connection to the database
     var db : OpaquePointer?
