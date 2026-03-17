@@ -68,9 +68,11 @@ extension DataManager
         else
         {
             print("Query not successfully executed")
+            print(String(cString: sqlite3_errmsg(db)))
         }
         
         sqlite3_reset(statement)
+        sqlite3_clear_bindings(statement)
     }
     
     //Check that a row has not been looped through in the results of a query
