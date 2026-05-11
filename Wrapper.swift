@@ -16,10 +16,18 @@ extension DataManager
         var optionalStatement: OpaquePointer?
         
         let result = sqlite3_prepare_v2(db, sql, -1, &optionalStatement, nil)
-        
+
         //There was a problem with the SQL or the statement does not exist (database may not be open/exists)
         guard result == SQLITE_OK, let statement = optionalStatement else
         {
+            // Get the specific error from SQLite
+            let errorMessage = String(cString: sqlite3_errmsg(db))
+            
+            print("---------------------------------------------------")
+            print("❌ SQLite Error - Could not prepare SQL statement")
+            print("---------------------------------------------------")
+            print(sql)
+            print(errorMessage)
             //Close the statement created in this function
             sqlite3_finalize(optionalStatement)
             print("Invalid SQL preparing query: \n\(sql)")
@@ -38,17 +46,7 @@ extension DataManager
         {
         case .double(let double): result = sqlite3_bind_double(statement, index, double)
         case .integer(let int): result = sqlite3_bind_int64(statement, index, Int64(int))
-        case .bool(let bool):
-            
-            if bool
-            {
-                result = sqlite3_bind_int64(statement, index, 1)
-            }
-            else
-            {
-                result = sqlite3_bind_int64(statement, index, 0)
-            }
-            
+        case .bool(let bool): result = sqlite3_bind_int64(statement, index, bool ? 1 : 0)     
         case .text(let text): result = sqlite3_bind_text(statement, index, text, -1, SQLITE_TRANSIENT)
         }
         
@@ -59,20 +57,22 @@ extension DataManager
     }
     
     //Run a query
-    func runQuery(_ statement: OpaquePointer)
+    @discardableResult //Suppresses the warning when the returned Bool is not used
+    func runQuery(_ statement: OpaquePointer) -> Bool
     {
-        if sqlite3_step(statement) == SQLITE_DONE
-        {
-            //Handle success
-        }
-        else
+        let result = sqlite3_step(statement)
+        let success = result == SQLITE_DONE
+    
+        if !success 
         {
             print("Query not successfully executed")
             print(String(cString: sqlite3_errmsg(db)))
         }
-        
+    
         sqlite3_reset(statement)
         sqlite3_clear_bindings(statement)
+
+        return success
     }
     
     //Check that a row has not been looped through in the results of a query
