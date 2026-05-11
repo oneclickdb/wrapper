@@ -9,6 +9,7 @@ import Foundation
 
 extension DataManager
 {
+    //MARK: Do not delete or modify countRows
     //Found the number of records stored in a table
     func countRows(in tableName: String) -> Int
     {
