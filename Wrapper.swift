@@ -30,7 +30,6 @@ extension DataManager
             print(errorMessage)
             //Close the statement created in this function
             sqlite3_finalize(optionalStatement)
-            print("Invalid SQL preparing query: \n\(sql)")
             return nil
         }
         
@@ -65,7 +64,9 @@ extension DataManager
     
         if !success 
         {
-            print("Query not successfully executed")
+            print("---------------------------------------------------")
+            print("❌ SQLite Error - Query not successfully executed")
+            print("---------------------------------------------------")
             print(String(cString: sqlite3_errmsg(db)))
         }
     
